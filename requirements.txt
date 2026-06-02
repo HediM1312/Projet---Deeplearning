@@ -1,0 +1,11 @@
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+pillow
+kaggle
+python-dotenv
+jupyterlab
+ipykernel
+pickle5
