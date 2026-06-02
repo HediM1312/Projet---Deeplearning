@@ -45,7 +45,30 @@ def print_classification_report(y_true, y_pred) -> None:
     print(classification_report(y_true, y_pred, target_names=EMOTIONS))
 
 
-def save_figure(fig_name: str, folder: str = "notebooks/figures") -> None:
+def plot_training_history(history: dict, title: str = "Courbes d'entraînement") -> None:
+    """Affiche loss et accuracy train/test."""
+    epochs = range(1, len(history["train_loss"]) + 1)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+    axes[0].plot(epochs, history["train_loss"], label="Train")
+    axes[0].plot(epochs, history["test_loss"], label="Test")
+    axes[0].set_title("Loss")
+    axes[0].set_xlabel("Epoch")
+    axes[0].legend()
+    axes[0].grid(True, alpha=0.3)
+
+    axes[1].plot(epochs, [a * 100 for a in history["train_acc"]], label="Train")
+    axes[1].plot(epochs, [a * 100 for a in history["test_acc"]], label="Test")
+    axes[1].set_title("Accuracy (%)")
+    axes[1].set_xlabel("Epoch")
+    axes[1].legend()
+    axes[1].grid(True, alpha=0.3)
+
+    plt.suptitle(title)
+    plt.tight_layout()
+
+
+def save_figure(fig_name: str, folder: str = "figures") -> None:
     """
     Sauvegarde une figure matplotlib.
     """
