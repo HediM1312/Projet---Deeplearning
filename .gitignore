@@ -1,0 +1,16 @@
+# Environment
+.env
+
+# Data
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Kaggle
+kaggle.json
