@@ -8,4 +8,6 @@ kaggle
 python-dotenv
 jupyterlab
 ipykernel
-pickle5
+torch
+torchvision
+tqdm
