@@ -11,3 +11,5 @@ ipykernel
 torch
 torchvision
 tqdm
+# Partie 3 — Deep Learning Avancé & Ingénierie (Meissa MARA)
+streamlit>=1.35.0
