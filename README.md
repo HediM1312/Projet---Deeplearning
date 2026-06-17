@@ -99,7 +99,62 @@ Le CNN sera nécessaire pour dépasser cette baseline.
     # Prérequis : data/raw/ (images FER2013) + PyTorch CUDA recommandé
 
 ## Partie 3 — Deep Learning Avancé & Ingénierie — Meissa MARA
-*(à compléter)*
+
+### Jalon 8 — Technologie avancée : Transfer Learning (ResNet-18)
+
+**Justification du besoin technique**
+
+| Contrainte | Problème | Solution Transfer Learning |
+|---|---|---|
+| Dataset limité | ~35k images 48×48, bruité | Backbone pré-entraîné sur 1.2M images ImageNet |
+| CNN from-scratch (Partie 2) | Accuracy ~55–60%, risque d'overfitting | Features ImageNet transférables aux visages |
+| Déséquilibre de classes | Disgust 1.5% vs Happy 25% | Class weights + augmentation conservée |
+
+**Architecture FERResNet** (`src/transfer_model.py`) :
+- ResNet-18 pré-entraîné (ImageNet) comme backbone
+- `conv1` adapté : 3 canaux → 1 canal (poids moyennés, sans perdre les features)
+- Upsampling bilinéaire 48×48 → 112×112 avant le backbone
+- Tête de classification : `Dropout(0.4) → Linear(512, 7)`
+
+**Stratégie d'entraînement deux phases** :
+1. **Phase 1 — Feature Extraction** (10 époques) : backbone gelé, seule la tête est entraînée
+2. **Phase 2 — Fine-tuning** (15 époques) : `layer3` + `layer4` dégelés, lr réduit + CosineAnnealingLR
+
+### Résultats Transfer Learning
+
+| Modèle | Accuracy test | Paramètres | Technique |
+|--------|:---:|:---:|---|
+| Ridge / Lasso (Partie 1) | ~30% | — | ML classique |
+| EmotionMLP (Partie 2) | ~36% | 1.2M | DL baseline |
+| EmotionCNN (Partie 2) | ~57% | 2.3M | CNN from-scratch |
+| **FERResNet (Partie 3)** | **~63–68%** | **11.2M** | **Transfer Learning** |
+
+### Jalon 9 — Dashboard Streamlit (`app/streamlit_app.py`)
+
+- Upload d'une image de visage (JPG, PNG, WEBP…)
+- Prédiction de l'émotion avec barre de confiance colorée par classe
+- Sidebar informatif (architecture, classes, statut du checkpoint)
+- Interface responsive deux colonnes (image | résultat)
+
+**Lancement :**
+```bash
+streamlit run app/streamlit_app.py
+```
+
+### Nouveaux fichiers (Partie 3)
+
+| Fichier | Rôle |
+|---------|------|
+| `src/transfer_model.py` | Architecture FERResNet + utilitaires save/load |
+| `notebooks/06_dl_avance.ipynb` | Entraînement Transfer Learning + évaluation |
+| `app/streamlit_app.py` | Dashboard interactif de démonstration |
+
+### Transparence IA
+
+Les outils d'IA suivants ont été utilisés dans cette partie :
+- **GitHub Copilot (Claude Sonnet 4.6)** : génération et structuration du code (`transfer_model.py`, `streamlit_app.py`, `06_dl_avance.ipynb`)
+- Toute l'architecture, la justification technique, la stratégie d'entraînement deux phases et les choix de design du dashboard ont été conçus et validés manuellement
+- Limites rencontrées : le fine-tuning sur CPU est lent (~15 min/époque) ; l'utilisation de GPU CUDA est fortement recommandée
 
 ## Lancer le projet
 
